@@ -121,15 +121,15 @@ ${ commonheader(_('Search'), "search", user, "80px") | n,unicode }
     <span data-bind="visible: collection.timeFilter.type() == 'rolling'">
       <select data-bind="value: collection.timeFilter.value" class="input-small"  style="margin-left:10px">
         <option value="all">${ _('All') }</option>
-        <option value="5MINUTES/MINUTES">${ _('Last 5 Minutes') }</option>
-        <option value="15MINUTES/MINUTES">Last 15 Minutes</option>
-        <option value="1HOURS/MINUTES">Last 1 Hour</option>
-        <option value="1DAYS/DAYS">Last day</option>
-        <option value="2DAYS/DAYS">Last 2 days</option>
-        <option value="7DAYS/DAYS">Last Week</option>
-        <option value="6MONTHS/MONTHS">Last 6 Months</option>
-        <option value="1YEARS/YEARS">Last Year</option>
-        <option value="2YEARS/YEARS">Last 2 Years</option>
+        <option value="5MINUTES">${ _('Last 5 Minutes') }</option>
+        <option value="15MINUTES">Last 15 Minutes</option>
+        <option value="1HOURS">Last 1 Hour</option>
+        <option value="1DAYS">Last day</option>
+        <option value="2DAYS">Last 2 days</option>
+        <option value="7DAYS">Last Week</option>
+        <option value="6MONTHS">Last 6 Months</option>
+        <option value="1YEARS">Last Year</option>
+        <option value="2YEARS">Last 2 Years</option>
       </select>      
     </span>
     

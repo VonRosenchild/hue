@@ -78,29 +78,29 @@ class SolrApi(object):
   def _get_range_borders(self, collection, query):
     props = {}
     GAPS = {
-        '5MINUTES/MINUTES': {
-            'histogram-widget': '+3SECONDS', # 100 slots
-            'facet-widget': '+30SECONDS', # 10 slots
+        '5MINUTES': {
+            'histogram-widget': {'coeff': '+3', 'unit': 'SECONDS'}, # 100 slots
+            'facet-widget': {'coeff': '+30', 'unit': 'SECONDS'}, # 10 slots
         },
-        '15MINUTES/MINUTES': {
-            'histogram-widget': '+10SECONDS',
-            'facet-widget': '+90SECONDS',
+        '15MINUTES': {
+            'histogram-widget': {'coeff': '+10', 'unit': 'SECONDS'},
+            'facet-widget': {'coeff': '+90', 'unit': 'SECONDS'},
         },
-        '1HOURS/MINUTES': {
-            'histogram-widget': '+36SECONDS',
-            'facet-widget': '+6MINUTES',
+        '1HOURS': {
+            'histogram-widget': {'coeff': '+36', 'unit': 'SECONDS'},
+            'facet-widget': {'coeff': '+6', 'unit': 'MINUTES'},
         },
-        '1DAYS/DAYS': {
-            'histogram-widget': '+15MINUTES',
-            'facet-widget': '+144MINUTES',
+        '1DAYS': {
+            'histogram-widget': {'coeff': '+15', 'unit': 'MINUTES'},
+            'facet-widget': {'coeff': '+144', 'unit': 'MINUTES'},
         },
-        '2DAYS/DAYS': {
-            'histogram-widget': '+30MINUTES',
-            'facet-widget': '+288MINUTES',
+        '2DAYS': {
+            'histogram-widget': {'coeff': '+30', 'unit': 'MINUTES'},
+            'facet-widget': {'coeff': '+288', 'unit': 'MINUTES'},
         },
-        '7DAYS/DAYS': {
-            'histogram-widget': '+3HOURS',
-            'facet-widget': '+1008MINUTES',
+        '7DAYS': {
+            'histogram-widget': {'coeff': '+3', 'unit': 'HOURS'},
+            'facet-widget': {'coeff': '+1008', 'unit': 'MINUTES'},
         }
         # ...
     }
@@ -108,7 +108,7 @@ class SolrApi(object):
     time_field = collection['timeFilter'].get('field')
 
     # fqs overrides main time filter
-    if time_field and time_field not in fq_fields:
+    if time_field and time_field not in fq_fields or True:
       if collection['timeFilter']['type'] == 'rolling' and collection['timeFilter']['value'] != 'all': # todo all for chart range? guess based on min
         props['field'] = collection['timeFilter']['field']
         props['from'] = 'NOW-%s' % collection['timeFilter']['value']
@@ -208,15 +208,14 @@ class SolrApi(object):
               'gap': facet['properties']['gap'],              
               'mincount': int(facet['properties']['mincount'])
           }
-          
-          # todo round by gap? 
-          
+
           if timeFilter:
 #            if facet['widgetType'] == 'histogram-widget':
+              gap = timeFilter['gap'][facet['widgetType']]
               keys.update({
-                'start': timeFilter['from'],
-                'end': timeFilter['to'],
-                'gap': timeFilter['gap'][facet['widgetType']], # add a 'auto'
+                'start': '%(from)s/%(unit)s' % {'from': timeFilter['from'], 'unit': gap['unit']},
+                'end': '%(to)s/%(unit)s' % {'to': timeFilter['to'], 'unit': gap['unit']},
+                'gap': '%(coeff)s%(unit)s/%(unit)s' % gap, # add a 'auto'
               })
               print keys
 
